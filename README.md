@@ -1,6 +1,8 @@
 # Reproducibility Package
 ## PC-BAN + LCBDS: Active Learning for OER Catalyst Discovery
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20272737.svg)](https://doi.org/10.5281/zenodo.20272737)
+
 This package contains all code, data, and precomputed results needed to
 reproduce the figures and tables in the paper.
 
