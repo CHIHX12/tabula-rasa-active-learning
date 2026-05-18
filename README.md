@@ -3,7 +3,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20272737.svg)](https://doi.org/10.5281/zenodo.20272737)
 
-This package contains all code, data, and precomputed results needed to
+This package contains all code and precomputed results needed to
 reproduce the figures and tables in the paper.
 
 ---
@@ -13,7 +13,7 @@ reproduce the figures and tables in the paper.
 ```
 submission_code/
 ├── data/
-│   └── OER_database.csv          # NiFeCoCe OER dataset (6,074 compositions)
+│   └── OER_database.csv          # NiFeCoCe OER dataset — see Dataset section below for download
 ├── src/
 │   ├── process_model.py          # PC-BAN surrogate model (MDN + BAN)
 │   └── data/
@@ -46,7 +46,7 @@ submission_code/
 ## Quick Start (Reproduce Figures Only)
 
 Figures 2-5 can be generated directly from precomputed results **without
-re-running any training** (seconds):
+re-running any training or downloading the dataset** (seconds):
 
 ```bash
 cd submission_code
@@ -63,6 +63,9 @@ python plot_journal_figures.py
 ## Full Reproduction (Re-run All Experiments)
 
 To reproduce all results from scratch (~6-10 hours, single GPU recommended):
+
+1. Download the dataset (see **Dataset** section below) and place it at `data/OER_database.csv`
+2. Run:
 
 ```bash
 cd submission_code
@@ -90,8 +93,15 @@ python main_active_learning.py --config configs/al_no_diversity.yaml
 
 ## Dataset
 
-`data/OER_database.csv` contains 6,074 discrete NiFeCoCe quaternary oxide
-compositions with measured overpotential J10 (mV) at 10 mA/cm².
+**The dataset is not included in this repository.** The OER experimental data used in this work originates from the publicly available supplementary material of:
+
+> Haber, J. A.; Cai, Y.; Jung, S.; Xiang, C.; Mitrovic, S.; Jin, J.; Bell, A. T.; Gregoire, J. M.
+> **Discovering Ce-rich oxygen evolution catalysts, from high throughput screening to water electrolysis.**
+> *Energy & Environmental Science*, 2014, **7**, 682–688.
+> DOI: [10.1039/C3EE43683G](https://doi.org/10.1039/C3EE43683G)
+> Supplementary data: https://www.rsc.org/suppdata/ee/c3/c3ee43683g/c3ee43683g.pdf
+
+To prepare the dataset, download the supplementary material from the link above and place the processed file as `data/OER_database.csv` with the following format:
 
 | Column | Description |
 |--------|-------------|
@@ -101,8 +111,8 @@ compositions with measured overpotential J10 (mV) at 10 mA/cm².
 | Ce     | Ce molar fraction |
 | J10    | Overpotential at 10 mA/cm² (mV) |
 
-The global minimum in this dataset is **206 mV** at
-(Ni=0.302, Fe=0.169, Co=0.071, Ce=0.471).
+The dataset contains 6,074 discrete NiFeCoCe quaternary oxide compositions.
+The global minimum is **206 mV** at (Ni=0.302, Fe=0.169, Co=0.071, Ce=0.471).
 
 ---
 

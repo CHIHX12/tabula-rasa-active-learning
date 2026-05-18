@@ -1,3 +1,6 @@
+# Dataset (not redistributed — download from https://doi.org/10.1039/C3EE43683G)
+data/OER_database.csv
+
 # Python cache
 __pycache__/
 *.pyc
