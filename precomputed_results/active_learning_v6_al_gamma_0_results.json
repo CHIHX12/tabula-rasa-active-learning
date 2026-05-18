@@ -1,0 +1,57 @@
+{
+  "version": "v6 n_query=2 beta:2.5->0.2 gamma=0.0 delta=12.0",
+  "design": "Prospective AL, Bootstrap OOB evaluation, key metrics: break_exp + best_mV",
+  "improvements": [
+    "Three-point batch: A=LCBDS B=MaxSigma C=MaxMu (n_query=2)",
+    "MC Dropout n_mc=20",
+    "LCBDS gamma=0.0mV delta=12.0mV",
+    "beta annealing 2.5→0.2",
+    "surprise curiosity r=0.1 thresh=2.0sigma"
+  ],
+  "n_init": 20,
+  "n_iter": 100,
+  "n_query": 2,
+  "total_labeled": 220,
+  "n_seeds": 5,
+  "n_bootstrap": 5,
+  "beta": 2.5,
+  "beta_min": 0.2,
+  "gamma_mV": 0.0,
+  "delta_mV": 12.0,
+  "surp_radius": 0.1,
+  "surp_thresh_sigma": 2.0,
+  "n_mc": 20,
+  "mean_surprise_count": 2.6,
+  "total_data": 6074,
+  "threshold_mV": 370.0,
+  "config_name": "al_gamma_0",
+  "lcb_break": {
+    "mean": 132.8,
+    "std": 75.39336840863393
+  },
+  "rnd_break": {
+    "mean": 113.6,
+    "std": 57.5972221552394
+  },
+  "greedy_break": {
+    "mean": 104.0,
+    "std": 83.56075633932474
+  },
+  "experiments_saved": -19.200000000000017,
+  "final_oob_r2": {
+    "lcb": 0.8667760871306107,
+    "greedy": 0.4257530068913131,
+    "random": 0.7924829705981945
+  },
+  "final_natural_r2": {
+    "lcb": 0.5625818490982055,
+    "greedy": 0.15398364067077636,
+    "random": 0.6329210638999939
+  },
+  "final_best_mV": {
+    "lcb": 368.6,
+    "greedy": 346.4,
+    "random": 365.4
+  },
+  "natural_test_size": 5854
+}

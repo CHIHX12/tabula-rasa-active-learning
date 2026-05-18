@@ -1,0 +1,67 @@
+# al_bold_206_s10: Bold config, seeds 10-14 (second batch)
+#
+# Scientific reasoning:
+#   The 206 mV point (Ni=0.302, Fe=0.169, Co=0.071, Ce=0.471) is an isolated
+#   discontinuity — nearest neighbor is 396 mV at dist=0.038. The only path to
+#   finding it is via the surprise mechanism:
+#     1. Query the 396 mV neighbor → model predicts ~420, gets 396 → SURPRISE
+#     2. Surprise bonus draws subsequent queries into that region
+#     3. With expanded budget and high δ, the 206 mV point may be reached
+#
+# Key changes vs baseline (al_aggressive):
+#   n_iter:       150  (vs 100) → 320 total labeled (5.3% of pool, vs 3.6%)
+#   n_query:       3  (vs 2)   → Point C (Max μ) now active for landscape coverage
+#   delta:        25  (vs 12)  → Strong surprise reward
+#   surp_radius: 0.15 (vs 0.1) → Wider surprise influence radius (covers 206 mV neighbor)
+#   surp_thresh_sigma: 1.5 (vs 2.0) → More sensitive surprise detection
+#   beta_min:    0.05 (vs 0.2) → Deeper exploitation at end
+#   gamma:        10  (vs 8)   → Slightly stronger diversity
+
+data:
+  path: data/OER_database.csv
+  features:
+  - Ni
+  - Fe
+  - Co
+  - Ce
+  target: J10
+  test_size: 0.15
+  random_seed: 42
+  n_folds: 5
+
+csgn:
+  embed_dim: 64
+  n_basis: 12
+  hidden_dims:
+  - 256
+  - 128
+  dropout: 0.1
+  use_triplets: true
+  triplet_rank: 4
+  sym_reg: 0.01
+  landscape_reg: 0.03
+  distill_alpha: 0.4
+
+training:
+  epochs: 800
+  batch_size: 128
+  lr: 0.00015
+  weight_decay: 5.0e-05
+  grad_clip: 1.0
+  early_stopping_patience: 150
+
+active_learning:
+  n_init: 20
+  n_iter: 150
+  n_query: 3
+  n_seeds: 5
+  seed_start: 10
+  n_bootstrap: 5
+  n_mc: 20
+  threshold_mV: 370.0
+  beta: 2.5
+  beta_min: 0.05
+  gamma: 10.0
+  delta: 25.0
+  surp_radius: 0.15
+  surp_thresh_sigma: 1.5

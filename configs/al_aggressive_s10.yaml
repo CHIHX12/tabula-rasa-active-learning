@@ -1,0 +1,46 @@
+# al_aggressive_s10: seeds 10-14 (second batch complementing seeds 0-4)
+data:
+  path: data/OER_database.csv
+  features:
+  - Ni
+  - Fe
+  - Co
+  - Ce
+  target: J10
+  test_size: 0.15
+  random_seed: 42
+  n_folds: 5
+csgn:
+  embed_dim: 64
+  n_basis: 12
+  hidden_dims:
+  - 256
+  - 128
+  dropout: 0.1
+  use_triplets: true
+  triplet_rank: 4
+  sym_reg: 0.01
+  landscape_reg: 0.03
+  distill_alpha: 0.4
+training:
+  epochs: 800
+  batch_size: 128
+  lr: 0.00015
+  weight_decay: 5.0e-05
+  grad_clip: 1.0
+  early_stopping_patience: 150
+active_learning:
+  n_init: 20
+  n_iter: 100
+  n_query: 2
+  n_seeds: 5
+  seed_start: 10
+  n_bootstrap: 5
+  n_mc: 20
+  threshold_mV: 370.0
+  beta: 2.5
+  beta_min: 0.2
+  gamma: 8.0
+  delta: 12.0
+  surp_radius: 0.1
+  surp_thresh_sigma: 2.0
