@@ -101,7 +101,7 @@ python main_active_learning.py --config configs/al_no_diversity.yaml
 > DOI: [10.1039/C3EE43683G](https://doi.org/10.1039/C3EE43683G)
 > Supplementary data: https://www.rsc.org/suppdata/ee/c3/c3ee43683g/c3ee43683g.pdf
 
-To prepare the dataset, download the supplementary material from the link above and place the processed file as `data/OER_database.csv` with the following format:
+The supplementary material is provided as a **PDF file** containing the raw tabular data. You will need to manually extract the numerical values from the PDF and save them as `data/OER_database.csv` with the following format:
 
 | Column | Description |
 |--------|-------------|
