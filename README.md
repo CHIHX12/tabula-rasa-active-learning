@@ -1,183 +1,68 @@
-# Reproducibility Package
-## PC-BAN + LCBDS: Active Learning for OER Catalyst Discovery
+# Descriptor-free active learning across compositional design spaces
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20272736.svg)](https://doi.org/10.5281/zenodo.20272736)
+Code and precomputed results for the PC-BAN surrogate and the LCBDS
+acquisition function, together with the controlled-experiment harness built
+for the revision.
 
-This package contains all code and precomputed results needed to
-reproduce the figures and tables in the paper.
+> **No dataset is redistributed here.** All six datasets are third-party
+> resources; see [DATASETS.md](DATASETS.md) for provenance, DOIs, expected
+> paths and required columns, and run `python fetch_data.py` to retrieve the
+> four UCI sets automatically. Every reported figure and table can be
+> regenerated from the precomputed trajectories without the raw data.
 
----
-
-## Directory Structure
+## Layout
 
 ```
-submission_code/
-├── data/
-│   └── OER_database.csv          # NiFeCoCe OER dataset — see Dataset section below for download
-├── src/
-│   ├── process_model.py          # PC-BAN surrogate model (MDN + BAN)
-│   └── data/
-│       └── loader.py             # Dataset loading utilities
-├── configs/                      # Experiment configurations (YAML)
-│   ├── al_aggressive.yaml        # Main baseline, seeds 0-4
-│   ├── al_aggressive_s10.yaml    # Main baseline, seeds 10-14
-│   ├── al_bold_206.yaml          # Bold strategy, seeds 0-4
-│   ├── al_bold_206_s10.yaml      # Bold strategy, seeds 10-14
-│   ├── al_no_mc.yaml             # Ablation: remove MC Dropout
-│   ├── al_no_annealing.yaml      # Ablation: remove beta annealing
-│   ├── al_no_diversity.yaml      # Ablation: remove diversity term
-│   ├── al_no_surprise.yaml       # Ablation: remove surprise term
-│   ├── al_single_query.yaml      # Ablation: single query per iter
-│   ├── al_pure_lcbds.yaml        # Ablation: pure LCB only
-│   ├── al_no_extras.yaml         # Ablation: Points A+B only
-│   ├── al_beta_*.yaml            # beta_min sweep (0.05-1.0)
-│   ├── al_gamma_*.yaml           # gamma sweep (0-15)
-│   └── al_delta_*.yaml           # delta sweep (0-20)
-├── precomputed_results/          # JSON results for all experiments
-│   └── active_learning_v6_*.json
-├── main_active_learning.py       # Main AL training and evaluation script
-├── plot_journal_figures.py       # Reproduce Figs. 2-5 from precomputed results
-├── run_all_experiments.sh        # Shell script: re-run all experiments from scratch
-└── requirements.txt
+main_active_learning.py     original AL pipeline (seed-fixed, see below)
+gp_baseline.py              Gaussian-process Bayesian-optimisation baseline
+generalize_multi.py         cross-domain study over the five public datasets
+plot_journal_figures.py     Figs. 2-5
+make_curve_figures.py       Fig. 6
+src/                        PC-BAN surrogate and data loader
+configs/                    49 experiment configurations (seeds 0-4 and 10-14)
+precomputed_results/        trajectories for the published runs
+revision_code/              controlled-experiment harness for the revision
+revision_results/           trajectories for every revision experiment
 ```
 
----
+## Reproducibility
 
-## Quick Start (Reproduce Figures Only)
+`main_active_learning.py` fixes the NumPy, PyTorch and CUDA (cuDNN) seeds, so
+re-running a configuration reproduces the stored trajectory exactly.
 
-Figures 2-5 can be generated directly from precomputed results **without
-re-running any training or downloading the dataset** (seconds):
+> Releases before v2.0.0 seeded only NumPy; PyTorch weight initialisation and
+> MC-Dropout were left random, so runs of those versions were not bit-identical
+> between repetitions. The three lines that fix it are now present, and
+> `revision_code/audit_consistency.py` re-derives every number quoted in the
+> manuscript from the stored results.
+
+## The revision harness
+
+`revision_code/al_harness.py` holds the candidate pool, the K-means initial
+design, the seeds, the labelled budget and the evaluation metric constant, and
+varies one factor at a time: the surrogate (`pcban`, `rf`, `gp`, `mlp`,
+`mlp_descriptor`), the batch composition (e.g. `lcbds+maxsigma`, `ei+ei`,
+`ei+maxsigma`), the acquisition weights, and the retraining protocol.
 
 ```bash
-cd submission_code
-pip install -r requirements.txt
-python plot_journal_figures.py
-# Output: figures/fig2_al_curves.png
-#         figures/fig3_ablation_components.png
-#         figures/fig4_strategy_comparison.png
-#         figures/fig5_hyperparameter_sweep.png
+python revision_code/al_harness.py --tag demo --protocol "lcbds+maxsigma" \
+       --n-iter 100 --seeds 0,1,2,3,4
+python revision_code/analyze.py e1     # budget-matched component ablation
+python revision_code/analyze.py e2     # exploration protocol held constant
+python revision_code/audit_consistency.py
 ```
 
----
+Diagnostics that explain the ablation results are in
+`revision_code/diag_terms.py` (magnitude of each acquisition term),
+`diag_cliff.py` (whether any surrogate can represent the optimum) and
+`diag_recall.py` (region-level signal).
 
-## Full Reproduction (Re-run All Experiments)
+## Environment
 
-To reproduce all results from scratch (~6-10 hours, single GPU recommended):
+Python 3.10, PyTorch 2.11 (CUDA 12.8), scikit-learn 1.5, SciPy 1.15.
+`pip install -r requirements.txt`.
 
-1. Download the dataset (see **Dataset** section below) and place it at `data/OER_database.csv`
-2. Run:
+## Citation
 
-```bash
-cd submission_code
-pip install -r requirements.txt
-bash run_all_experiments.sh
-```
-
-Results are saved to `results/`. After completion, run
-`python plot_journal_figures.py` to regenerate figures from fresh results.
-
-### Running Individual Experiments
-
-```bash
-# Main comparison baseline (seeds 0-4)
-python main_active_learning.py --config configs/al_aggressive.yaml
-
-# Bold strategy targeting global minimum (seeds 0-4)
-python main_active_learning.py --config configs/al_bold_206.yaml
-
-# Ablation: remove diversity term
-python main_active_learning.py --config configs/al_no_diversity.yaml
-```
-
----
-
-## Dataset
-
-**The dataset is not included in this repository.** The OER experimental data used in this work originates from the publicly available supplementary material of:
-
-> Haber, J. A.; Cai, Y.; Jung, S.; Xiang, C.; Mitrovic, S.; Jin, J.; Bell, A. T.; Gregoire, J. M.
-> **Discovering Ce-rich oxygen evolution catalysts, from high throughput screening to water electrolysis.**
-> *Energy & Environmental Science*, 2014, **7**, 682–688.
-> DOI: [10.1039/C3EE43683G](https://doi.org/10.1039/C3EE43683G)
-> Supplementary data: https://www.rsc.org/suppdata/ee/c3/c3ee43683g/c3ee43683g.pdf
-
-The supplementary material is provided as a **PDF file** containing the raw tabular data. You will need to manually extract the numerical values from the PDF and save them as `data/OER_database.csv` with the following format:
-
-| Column | Description |
-|--------|-------------|
-| Ni     | Ni molar fraction |
-| Fe     | Fe molar fraction |
-| Co     | Co molar fraction |
-| Ce     | Ce molar fraction |
-| J10    | Overpotential at 10 mA/cm² (mV) |
-
-The dataset contains 6,074 discrete NiFeCoCe quaternary oxide compositions.
-The global minimum is **206 mV** at (Ni=0.302, Fe=0.169, Co=0.071, Ce=0.471).
-
----
-
-## Software Requirements
-
-| Package       | Tested Version |
-|---------------|---------------|
-| Python        | 3.10          |
-| PyTorch       | 2.8.0         |
-| NumPy         | 2.2.6         |
-| scikit-learn  | 1.5.0         |
-| SciPy         | 1.15.3        |
-| Pandas        | 2.2.x         |
-| Matplotlib    | 3.8.x         |
-| PyYAML        | 6.0           |
-
-GPU is recommended but not required. The code automatically falls back to CPU.
-
----
-
-## Experiment Configurations
-
-All hyperparameters are specified in YAML configs under `configs/`.
-Key parameters for the main baseline (`al_aggressive.yaml`):
-
-| Parameter          | Value | Description                          |
-|--------------------|-------|--------------------------------------|
-| n_init             | 20    | Initial labeled set size             |
-| n_iter             | 100   | AL iterations                        |
-| n_query            | 2     | Queries per iteration (Points A, B)  |
-| beta               | 2.5   | Initial exploration weight           |
-| beta_min           | 0.2   | Final exploitation weight            |
-| gamma              | 8.0   | Diversity penalty weight (mV)        |
-| delta              | 12.0  | Surprise bonus weight (mV)           |
-| surp_radius        | 0.10  | Surprise influence radius            |
-| surp_thresh_sigma  | 2.0   | Surprise detection threshold (×std)  |
-| n_bootstrap        | 5     | Bootstrap ensemble size              |
-| n_mc               | 20    | MC Dropout passes per model          |
-
----
-
-## Expected Key Results (from precomputed_results/)
-
-### Main Comparison (10 seeds, merged)
-| Method           | Best J10 (mV) | Notes                        |
-|------------------|--------------|------------------------------|
-| LCBDS (nq=2)     | 365.8 ± 4.7  | Baseline, all seeds ≤370 mV  |
-| LCBDS Bold (nq=3)| 319.9 ± 69.2 | 2/10 seeds find 206 mV       |
-
-### Ablation (5 seeds)
-| Variant         | break_exp  | Best J10 (mV) | OOB R²  |
-|-----------------|-----------|--------------|---------|
-| Full LCBDS      | 113 ± 45  | 363          | 0.872   |
-| w/o diversity   | 173 ± 39  | 368          | 0.890   |
-| w/o MaxSigma    | 106 ± 18  | 370          | 0.696   |
-| Pure LCB        | 87 ± 41   | 376          | 0.674   |
-
----
-
-## Notes on Stochasticity
-
-Neural network training involves randomness. Results across independent runs
-will show small numerical variation (typically ±5 mV in best_J10,
-±15 in break_exp). The precomputed results in `precomputed_results/`
-represent the exact numbers reported in the paper.
-
-To match paper numbers exactly: use the precomputed results directly
-with `python plot_journal_figures.py`.
+Archived on Zenodo: [10.5281/zenodo.20272736](https://doi.org/10.5281/zenodo.20272736)
+(concept DOI, always resolves to the current version).

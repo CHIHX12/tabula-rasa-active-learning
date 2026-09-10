@@ -59,6 +59,10 @@ from src.data.loader import load_data, fit_target_scaler
 from src.process_model import PCBAN
 
 DEVICE  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Reproducibility: make CUDA/cuDNN deterministic (paired with torch.manual_seed
+# in each training function so LCBDS/Greedy results are bit-reproducible).
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 ELEM    = ["Ni", "Fe", "Co", "Ce"]
 RES_DIR = ROOT / "results"; RES_DIR.mkdir(exist_ok=True)
 FIG_DIR = ROOT / "figures"; FIG_DIR.mkdir(exist_ok=True)
@@ -134,6 +138,8 @@ def bootstrap_train_oob(X_tr: np.ndarray, y_tr_sc: np.ndarray,
     """
     n   = len(X_tr)
     rng = np.random.default_rng(seed_offset)
+    torch.manual_seed(seed_offset)
+    torch.cuda.manual_seed_all(seed_offset)
 
     models    = []
     oob_preds = np.full((n_models, n), np.nan)
@@ -195,6 +201,8 @@ def warm_start_bootstrap(prev_models: list,
     """
     n   = len(X_tr)
     rng = np.random.default_rng(seed_offset)
+    torch.manual_seed(seed_offset)
+    torch.cuda.manual_seed_all(seed_offset)
     models    = []
     oob_preds = np.full((n_models, n), np.nan)
 
@@ -253,6 +261,8 @@ def distill_bootstrap(teacher_models: list,
     """
     n   = len(X_tr)
     rng = np.random.default_rng(seed_offset)
+    torch.manual_seed(seed_offset)
+    torch.cuda.manual_seed_all(seed_offset)
 
     # Soft labels from Teacher on unlabeled pool (eval mode, no dropout)
     with torch.no_grad():
