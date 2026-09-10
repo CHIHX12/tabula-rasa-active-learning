@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 """Cross-document consistency audit.
 
-Every number that appears in the manuscript, the tables, the supplementary
-information and the response letter is checked against the value recomputed
-from revision/results/*.json.  A claim that cannot be traced to a stored result
-is reported, and so is any figure that disagrees with it.
+Every number asserted in the write-up, its tables and its supplementary
+information is checked against the value recomputed from the stored runs in
+revision_results/.  A claim that cannot be traced to a stored result is
+reported, and so is any figure that disagrees with it.
+
+The published copy of this script keeps the checks that recompute numbers
+from the runs; the sections that open the Word files are inert here, because
+the documents themselves are not part of this archive.
 """
 from __future__ import annotations
 
