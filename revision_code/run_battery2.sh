@@ -25,13 +25,13 @@ run () {
 
 echo "=== BATTERY2 START $(date +%F\ %H:%M:%S) ==="
 
-# ── surrogate study: swap the surrogate, hold the LCBDS protocol constant ──
+# ── Referee 1 Q4: swap the surrogate, hold the LCBDS protocol constant ──
 run E3_rf        0 --seeds "$SEEDS10" --surrogate rf  --protocol "lcbds+maxsigma" --n-iter 100
 run E3_gp_lcbds  1 --seeds "$SEEDS10" --surrogate gp  --protocol "lcbds+maxsigma" --n-iter 100
 run E3_mlp       0 --seeds "$SEEDS10" --surrogate mlp --protocol "lcbds+maxsigma" --n-iter 100
 run E3_mlpdesc   1 --seeds "$SEEDS10" --surrogate mlp_descriptor --protocol "lcbds+maxsigma" --n-iter 100
 
-# ── surrogate study: retraining protocol (5 seeds; 'scratch' is ~4x the cost) ──
+# ── Referee 1 Q1: retraining protocol (5 seeds; 'scratch' is ~4x the cost) ──
 run E4_warm      0 --seeds "$SEEDS5" --protocol "lcbds+maxsigma" --n-iter 100 --train-mode warm
 run E4_scratch   1 --seeds "$SEEDS5" --protocol "lcbds+maxsigma" --n-iter 100 --train-mode scratch
 

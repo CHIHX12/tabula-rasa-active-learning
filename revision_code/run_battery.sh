@@ -25,14 +25,14 @@ run () {   # run <tag> <gpu> <args...>
 
 echo "=== BATTERY START $(date +%F\ %H:%M:%S) ==="
 
-# ── Battery 2 (cheap, GP surrogate: design requirement / surrogate study) ──
+# ── Battery 2 (cheap, GP surrogate: Editor objection #2 / Referee 1 Q3) ──
 run E2_gp_ei            0 --surrogate gp --protocol "ei+ei"        --n-iter 100
 run E2_gp_ei_maxsigma   0 --surrogate gp --protocol "ei+maxsigma"  --n-iter 100
 run E2_gp_lcb           1 --surrogate gp --protocol "lcb+lcb"      --n-iter 100
 run E2_gp_lcb_maxsigma  1 --surrogate gp --protocol "lcb+maxsigma" --n-iter 100
 run E2_gp_random        0 --surrogate gp --protocol "random+random" --n-iter 100
 
-# ── Battery 1 (design requirement: budget-matched component ablation) ──
+# ── Battery 1 (Editor objection #1: budget-matched component ablation) ──
 run E1_full             0 --protocol "lcbds+maxsigma" --n-iter 100 --gamma 8  --delta 12
 run E1_nodiv            1 --protocol "lcbds+maxsigma" --n-iter 100 --gamma 0  --delta 12
 run E1_nosurp           0 --protocol "lcbds+maxsigma" --n-iter 100 --gamma 8  --delta 0

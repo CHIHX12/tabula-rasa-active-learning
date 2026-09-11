@@ -2,11 +2,11 @@
 Controlled study of the PC-BAN training objective and the MDN head.
 
 Answers, with numbers rather than assertion:
-  * surrogate study  -- how were lambda_MSE = 0.10 and lambda_rec = 0.02 chosen?
+  * Referee 1 Q5  -- how were lambda_MSE = 0.10 and lambda_rec = 0.02 chosen?
                      -> full one-factor-at-a-time sensitivity sweep.
-  * MDN/loss study -- is the MSE term necessary, given the NLL already
+  * Referee 2 Q1.2 -- is the MSE term necessary, given the NLL already
                      contains it in some form?  -> lambda_MSE = 0 arm.
-  * MDN/loss study -- why a Gaussian mixture if only the mean and variance are
+  * Referee 2 Q1.1 -- why a Gaussian mixture if only the mean and variance are
                      used?  -> K = 1 (single Gaussian) vs K > 1, scored on
                      accuracy AND on the quality of the uncertainty that the
                      acquisition function actually consumes.

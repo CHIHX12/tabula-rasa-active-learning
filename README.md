@@ -43,8 +43,9 @@ calibrated within one model class. Both limits are documented in the script.
 main_active_learning.py     original AL pipeline (seed-fixed, see below)
 gp_baseline.py              Gaussian-process Bayesian-optimisation baseline
 generalize_multi.py         cross-domain study over the five public datasets
-plot_journal_figures.py     Figs. 2-5
-make_curve_figures.py       Fig. 6
+revision_code/make_figures.py   Figs. 1-7 as published
+plot_journal_figures.py     figures of the original submission
+make_curve_figures.py       figures of the original submission
 src/                        PC-BAN surrogate and data loader
 configs/                    49 experiment configurations (seeds 0-4 and 10-14)
 precomputed_results/        trajectories for the published runs
@@ -59,9 +60,9 @@ re-running a configuration reproduces the stored trajectory exactly.
 
 > Releases before v2.0.0 seeded only NumPy; PyTorch weight initialisation and
 > MC-Dropout were left random, so runs of those versions were not bit-identical
-> between repetitions. The three lines that fix it are now present, and
-> `revision_code/audit_consistency.py` re-derives every number quoted in the
-> manuscript from the stored results.
+> between repetitions. The three lines that fix it are now present. Check it
+> with `python3 verify_reproducibility.py`, which runs one configuration twice
+> and compares the trajectories element by element.
 
 ## The revision harness
 
@@ -78,6 +79,28 @@ python revision_code/analyze.py e1     # budget-matched component ablation
 python revision_code/analyze.py e2     # exploration protocol held constant
 python revision_code/audit_consistency.py
 ```
+
+## Regenerating each figure and table
+
+All of these read `revision_results/` and need no raw data.
+
+| output | command |
+|---|---|
+| Figs. 2-7 | `python3 revision_code/make_figures.py` |
+| Fig. 1 | the author's own illustration; it ships with the manuscript, and `make_figures.py` skips it here |
+| Table 1 (ablation) | `python3 revision_code/table1.py` |
+| Table 2 (cross-domain) | `python3 revision_code/table2.py` |
+| Tables S4, S5 (loss weights, mixture size) | `python3 revision_code/loss_and_mdn_study.py` |
+| Table S3 (surrogates), Table S6 (interval coverage) | `python3 revision_code/capability_study.py` |
+| Section 3.2 contraction ratio | `python3 revision_code/contraction_ratio.py` |
+| Section 3.6 continuous simplex | `python3 revision_code/continuous_space.py` |
+| every number quoted in the paper | `python3 revision_code/audit_consistency.py` |
+| determinism | `python3 verify_reproducibility.py` |
+
+`audit_consistency.py` re-derives each quoted value from the stored
+trajectories. The checks that compare those values against the manuscript text
+are skipped here, and say so, because the manuscript is not part of this
+archive.
 
 Diagnostics that explain the ablation results are in
 `revision_code/diag_terms.py` (magnitude of each acquisition term),

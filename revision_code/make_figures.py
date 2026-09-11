@@ -45,7 +45,7 @@ def save(fig, name):
 
     RSC typesets from the vector file; the 1200 dpi raster is the fallback the
     submission system asks for; the 600 dpi copy is what goes inside the Word
-    file, which keeps the document a reasonable size while staying well above
+    file, which keeps the manuscript a reasonable size while staying well above
     the 300 dpi that would be visibly soft in the review PDF.
     """
     fig.savefig(OUT / f"{name}.pdf")
@@ -75,6 +75,17 @@ def merge(tags):
                 curves=[load(t) for t in tags if load(t)])
 
 
+def _contraction(sigma):
+    """Last tenth of a campaign over its first tenth, floor of three iterations.
+
+    The quantity proposed in Section 3.2 as a held-out-free stand-in for the
+    out-of-bag score.
+    """
+    s = np.asarray(sigma, float)
+    n = max(3, len(s) // 10)
+    return float(np.nanmean(s[-n:]) / np.nanmean(s[:n]))
+
+
 def best_curves(tags):
     cur = []
     for t in tags:
@@ -102,32 +113,56 @@ def _arrow(ax, x0, y0, x1, y1, ec="#333333", lw=0.9, style="-|>", rad=0.0):
 
 
 def fig1():
-    """Fig. 1 is the author's own workflow illustration, kept as drawn.
+    """Fig. 1 is the author's own workflow illustration, resampled for print.
 
-    It is copied from manuscript_figures/main/fig1.bmp into the figures folder
-    in the same three forms as every other figure, so that the submission
-    package is uniform.  It is a raster original (1302 x 525 px), so the PDF
-    here wraps that raster rather than being true vector art; at the full text
-    width of 7.07 in it prints at about 184 dpi.
+    The only copy that exists is a 1302 x 525 raster (the copy embedded in the
+    submitted Word file is smaller still, 762 x 308), so at the full text width
+    of 7.07 in its native resolution is about 184 dpi and a printer reproduces
+    visible pixel edges on the lettering.
+
+    Resampling cannot add detail and is not claimed to.  What it does is remove
+    the staircase edges: a Lanczos resample to the target pixel count, followed
+    by a mild unsharp pass that restores the edge contrast interpolation costs.
+    Both operate on information already in the file; nothing is synthesised,
+    which is why no learned upscaler is used here, since those invent letter
+    shapes and this figure carries text.
     """
-    from PIL import Image
-    src = HERE.parent / "manuscript_figures" / "main" / "fig1.bmp"
-    im = Image.open(src).convert("RGB")
-    im.save(OUT / "Fig1_framework.png")
-    im.save(OUT / "Fig1_framework_600dpi.png")
-    # PIL's PDF writer needs a JPEG encoder that is not built into this
-    # Pillow; wrap the raster with matplotlib instead, at its native pixel
-    # size so that nothing is resampled.
+    from PIL import Image, ImageFilter
+    # The source raster is the author's own illustration and lives with the
+    # manuscript, which the published archive does not contain.  Figures 2 to 7
+    # are generated from the stored trajectories and need nothing external, so
+    # a missing Fig. 1 source skips this figure rather than stopping the run.
+    src_path = HERE.parent / "manuscript_figures" / "main" / "fig1.bmp"
+    if not src_path.exists():
+        src_path = HERE / "fig1.bmp"
+    if not src_path.exists():
+        print("  Fig. 1 skipped: the source illustration "
+              "(manuscript_figures/main/fig1.bmp) ships with the manuscript, "
+              "not with this archive. Figs. 2-7 are unaffected.")
+        return
+    src = Image.open(src_path).convert("RGB")
     w_in = 7.07
-    f = plt.figure(figsize=(w_in, w_in * im.size[1] / im.size[0]))
-    a = f.add_axes([0, 0, 1, 1]); a.axis("off"); a.grid(False)
-    a.imshow(np.asarray(im), interpolation="none", aspect="auto")
-    f.savefig(OUT / "Fig1_framework.pdf", dpi=im.size[0] / w_in,
-              bbox_inches=None, pad_inches=0)
-    plt.close(f)
-    print(f"  Fig1_framework: copied from {src.name} ({im.size[0]}x{im.size[1]} px, "
-          f"{im.size[0] / 7.07:.0f} dpi at full width)")
 
+    def resample(dpi):
+        tw = int(round(dpi * w_in))
+        th = int(round(tw * src.size[1] / src.size[0]))
+        scale = tw / src.size[0]
+        im = src.resize((tw, th), Image.LANCZOS)
+        return im.filter(ImageFilter.UnsharpMask(radius=scale * 0.8,
+                                                 percent=55, threshold=3))
+
+    full = resample(1200)
+    full.save(OUT / "Fig1_framework.png", dpi=(1200, 1200), optimize=True)
+    resample(600).save(OUT / "Fig1_framework_600dpi.png", dpi=(600, 600), optimize=True)
+
+    f = plt.figure(figsize=(w_in, w_in * src.size[1] / src.size[0]))
+    a = f.add_axes([0, 0, 1, 1]); a.axis("off"); a.grid(False)
+    a.imshow(np.asarray(full), interpolation="none", aspect="auto")
+    f.savefig(OUT / "Fig1_framework.pdf", dpi=1200, bbox_inches=None, pad_inches=0)
+    plt.close(f)
+    print(f"  Fig1_framework: {src.size[0]}x{src.size[1]} source resampled to "
+          f"{full.size[0]}x{full.size[1]} (1200 dpi at {w_in} in); "
+          f"native detail remains {src.size[0] / w_in:.0f} dpi")
 
 # ════════════════════════════════════════════════════════════════
 def fig2():
@@ -188,11 +223,10 @@ def fig2():
         d = load(tag)
         if d is None:
             continue
-        ra = np.nanmean([np.nanmean(r["history"]["sigma"][-10:])
-                         / np.nanmean(r["history"]["sigma"][:5]) for r in d["runs"]])
+        ra = np.nanmean([_contraction(r["history"]["sigma"]) for r in d["runs"]])
         pr = np.nanmean([np.nanmean(r["history"]["pool_r2"][-10:]) for r in d["runs"]])
         ax[3].scatter(ra, pr, s=26, color=col, zorder=3, lw=0.5, edgecolor="white")
-    ax[3].axvspan(0.66, 0.78, color=C["grey"], alpha=0.12, lw=0)
+    ax[3].axvspan(0.65, 0.75, color=C["grey"], alpha=0.12, lw=0)
     ax[3].set_xlabel(r"predictive $\hat\sigma$: final / initial")
     ax[3].set_ylabel("out-of-pool $R^2$")
     ax[3].set_title("(d) held-out-free diagnostic", loc="left", fontsize=8)

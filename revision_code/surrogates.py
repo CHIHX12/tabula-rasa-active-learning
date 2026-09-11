@@ -3,7 +3,7 @@ Surrogate models for the controlled active-learning comparison (revision).
 
 Every surrogate exposes the SAME interface so that the acquisition function and
 the query protocol can be held constant while only the surrogate is swapped
-(surrogate-isolation study):
+(Referee 1 comment 4; Referee 2 additional comment 2):
 
     s = Surrogate(...)
     s.fit(X_lab, y_lab, seed)              -> trains / refits
@@ -36,7 +36,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ─────────────────────────────────────────────────────────────────
 # Elemental descriptors for the descriptor-based control model
-# (descriptor comparison: "and, where appropriate, with representative
+# (Referee 1, comment 4: "and, where appropriate, with representative
 #  descriptor-based models to demonstrate the benefit of the
 #  descriptor-free formulation")
 # Values: atomic number, Pauling electronegativity, atomic radius (pm),
@@ -99,7 +99,7 @@ class PCBANSurrogate(BaseSurrogate):
     """Bootstrap ensemble of PC-BAN with MC-Dropout, identical to the
     published pipeline.  `train_mode` selects the retraining protocol so that
     the contribution of warm-starting and self-knowledge-distillation can be
-    isolated (retraining-protocol study).
+    isolated (Referee 1, comment 1).
 
         train_mode = "warm_kd"  : scratch -> warm start, distil on tier change (published)
         train_mode = "warm"     : scratch -> warm start, plain retrain on tier change
@@ -381,7 +381,7 @@ class PCBANSurrogate(BaseSurrogate):
 
 
 # ─────────────────────────────────────────────────────────────────
-# Simple composition-only baselines (descriptor comparison:)
+# Simple composition-only baselines (Referee 1, comment 4)
 # ─────────────────────────────────────────────────────────────────
 class RFSurrogate(BaseSurrogate):
     """Random forest on raw composition; sigma = std over trees."""

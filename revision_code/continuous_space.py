@@ -1,6 +1,7 @@
 """
-Active learning on a CONTINUOUS compositional simplex (continuous-space study;
-a limitation of pool-based benchmarks).
+Active learning on a CONTINUOUS compositional simplex (Referee 1, comment 2;
+Editor: "all active-learning experiments are performed on finite predefined
+candidate pools").
 
 There is no fixed candidate pool here.  At every iteration a *fresh* set of
 candidates is drawn from the continuous simplex, the acquisition function is

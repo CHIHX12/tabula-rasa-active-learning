@@ -4,8 +4,8 @@
 # The submitted Section 3.4 quoted a five-seed sweep produced by the original
 # v6 pipeline (beta_min default 0.1, NumPy-only seeding).  Recomputing those
 # same files at ten seeds already moves the numbers well outside the quoted
-# range, and mixing two pipelines inside one study is not defensible.
-# Every point of the sweep is therefore regenerated
+# range, and mixing two pipelines inside one paper is exactly what the editor
+# objected to elsewhere.  Every point of the sweep is therefore regenerated
 # here through revision/al_harness.py: same pool, same K-means initial design,
 # same ten seeds, same 220-experiment budget, same out-of-pool metric.
 #

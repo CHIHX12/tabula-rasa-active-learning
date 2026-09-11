@@ -1,6 +1,7 @@
 #!/bin/bash
-# The 470-experiment "Bold" configuration had never been run under the
-# controlled harness, so earlier comparisons against it were not controlled.
+# The paper's headline claim rests on the 470-experiment "Bold" configuration.
+# It was never re-run under the controlled harness, so the comparison in the
+# submitted manuscript (and in our own first re-analysis) was not controlled.
 # Here every arm uses the SAME 470-experiment budget, the same three-query
 # batch size, the same K-means initial design and the same ten seeds.
 cd "$(dirname "$0")/.." || exit 1

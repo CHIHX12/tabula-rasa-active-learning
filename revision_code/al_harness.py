@@ -2,10 +2,11 @@
 Controlled active-learning harness for the Digital Discovery revision.
 
 Design goal: hold EVERYTHING constant except the one factor under test, so that
-each question about what the surrogate and the protocol contribute can be
-answered by a clean factorial contrast.
+each of the editor's three blocking objections can be answered by a clean
+factorial contrast.
 
 Held constant across every run
+------------------------------
 * candidate pool and oracle
 * K-means space-filling initialisation (n_init points, same seed)
 * total labelled budget (n_init + n_iter * n_query)
@@ -13,13 +14,15 @@ Held constant across every run
 * evaluation metric
 
 Factors that can be varied
-* ``surrogate``   : pcban | rf | gp | mlp | mlp_descriptor   (surrogate study)
-* ``protocol``    : the per-iteration batch, e.g. "lcbds+maxsigma"  (protocol study)
-* ``gamma``/``delta``/``beta`` : LCBDS weights                      (weight study)
-* ``train_mode``  : scratch | warm | warm_kd                        (surrogate study)
-* ``lam_mse``/``lam_rec``/``K`` : PC-BAN loss and MDN settings   (loss and MDN study)
+--------------------------
+* ``surrogate``   : pcban | rf | gp | mlp | mlp_descriptor   (Referee 1 Q4)
+* ``protocol``    : the per-iteration batch, e.g. "lcbds+maxsigma"  (Editor #2)
+* ``gamma``/``delta``/``beta`` : LCBDS weights                      (Editor #1)
+* ``train_mode``  : scratch | warm | warm_kd                        (Referee 1 Q1)
+* ``lam_mse``/``lam_rec``/``K`` : PC-BAN loss and MDN settings   (Referee 1 Q5, Referee 2 Q1)
 
-Common evaluation metric
+Common evaluation metric (Editor #3)
+------------------------------------
 ``pool_r2`` -- the coefficient of determination of the surrogate's predictive
 mean over the *currently unlabelled* candidate pool, recorded at every
 iteration for EVERY strategy including GP-BO.  This is directly comparable

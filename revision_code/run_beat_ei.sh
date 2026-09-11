@@ -7,7 +7,7 @@
 #     LCBDS + fixes    vs    EI + the SAME fixes
 #
 # Comparing a fixed LCBDS against an unfixed EI would repeat exactly the
-# uncontrolled comparison the design requirement objected to.
+# uncontrolled comparison the editor objected to.
 #
 # We also test four LCBDS variants that have a mechanistic reason to beat EI on
 # this landscape, whose optimum is an isolated outlier (nearest neighbour 190 mV
