@@ -1,5 +1,5 @@
 """
-Active learning on a CONTINUOUS compositional simplex (Referee 1, comment 2;
+Active learning on a CONTINUOUS compositional simplex (no fixed candidate pool;
 Editor: "all active-learning experiments are performed on finite predefined
 candidate pools").
 

@@ -2,8 +2,8 @@
 Surrogate models for the controlled active-learning comparison (revision).
 
 Every surrogate exposes the SAME interface so that the acquisition function and
-the query protocol can be held constant while only the surrogate is swapped
-(Referee 1 comment 4; Referee 2 additional comment 2):
+the query protocol can be held constant while only the surrogate is swapped,
+which is what separates the surrogate's contribution from the acquisition's:
 
     s = Surrogate(...)
     s.fit(X_lab, y_lab, seed)              -> trains / refits
@@ -35,10 +35,9 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # ─────────────────────────────────────────────────────────────────
-# Elemental descriptors for the descriptor-based control model
-# (Referee 1, comment 4: "and, where appropriate, with representative
-#  descriptor-based models to demonstrate the benefit of the
-#  descriptor-free formulation")
+# Elemental descriptors for the descriptor-based control model.  This is the
+# controlled test of the descriptor-free formulation: same network, same
+# protocol, hand-engineered features instead of the raw composition.
 # Values: atomic number, Pauling electronegativity, atomic radius (pm),
 #         number of d electrons, first ionisation energy (eV),
 #         common oxidation state.
@@ -99,7 +98,7 @@ class PCBANSurrogate(BaseSurrogate):
     """Bootstrap ensemble of PC-BAN with MC-Dropout, identical to the
     published pipeline.  `train_mode` selects the retraining protocol so that
     the contribution of warm-starting and self-knowledge-distillation can be
-    isolated (Referee 1, comment 1).
+    isolated.
 
         train_mode = "warm_kd"  : scratch -> warm start, distil on tier change (published)
         train_mode = "warm"     : scratch -> warm start, plain retrain on tier change
@@ -381,7 +380,7 @@ class PCBANSurrogate(BaseSurrogate):
 
 
 # ─────────────────────────────────────────────────────────────────
-# Simple composition-only baselines (Referee 1, comment 4)
+# Simple composition-only baselines, as controls for the neural surrogate
 # ─────────────────────────────────────────────────────────────────
 class RFSurrogate(BaseSurrogate):
     """Random forest on raw composition; sigma = std over trees."""

@@ -1,7 +1,7 @@
 """
 Aggregate every controlled run into one table on ONE common metric.
 
-Primary surrogate-quality metric (Editor objection #3):
+Primary surrogate-quality metric, common to every strategy:
     pool_R2_terminal = mean of the out-of-pool R^2 over the last 10 AL
     iterations, computed identically for every surrogate (PC-BAN, GP, RF, MLP)
     on the compositions that strategy has never queried.
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         table(["E2_gp_ei", "E2_gp_ei_maxsigma", "E2_gp_lcb", "E2_gp_lcb_maxsigma",
                "E2_gp_random", "E2_pcban_ei", "E2_pcban_ei_maxsigma",
                "E1_full", "E1_greedy", "E1_greedy_maxsigma", "E1_random"],
-              "Editor objection #2 — exploration protocol held constant",
+              "exploration protocol held constant",
               ref="E1_full")
 
     if which in ("all", "e1"):
@@ -137,15 +137,15 @@ if __name__ == "__main__":
                "E1_lcbds_rand2", "E1_lcbds_x2",
                "E1_Aonly_matched", "E1_pureLCB_matched",
                "E1_greedy", "E1_random"],
-              "Editor objection #1 — budget-matched component ablation",
+              "budget-matched component ablation",
               ref="E1_full")
 
     if which in ("all", "e3"):
         table(["E1_full", "E3_rf", "E3_gp_lcbds", "E3_mlp", "E3_mlpdesc"],
-              "Referee 1 Q4 — surrogate held-out under one identical protocol",
+              "surrogate varied under one identical protocol",
               ref="E1_full")
 
     if which in ("all", "e4"):
         table(["E1_full", "E4_warm", "E4_scratch"],
-              "Referee 1 Q1 — retraining protocol (warm start / distillation)",
+              "retraining protocol (warm start / distillation)",
               ref="E1_full")

@@ -4,7 +4,7 @@
 # The paper's surrogate claim rests on high dimensionality: a Gaussian process
 # collapses at N = 13 while the descriptor-free network holds.  But the only
 # random-forest comparison in the paper is at N = 4, where it ties the network
-# (p = 0.92).  A referee will ask immediately whether the forest also holds at
+# (p = 0.92).  The obvious question is whether the forest also holds at
 # N = 13, and the paper cannot answer.  This closes that gap: same datasets,
 # same protocol, same initial design, same ten seeds, only the surrogate
 # changes.

@@ -9,12 +9,12 @@ echo "[chain] wave 1 done $(date +%H:%M:%S)"
 MAXJ=5 ./revision/run_battery2.sh >> revision/logs/battery2.log 2>&1
 echo "[chain] wave 2 done $(date +%H:%M:%S)"
 
-# Loss-weight / MDN study (Referee 1 Q5, Referee 2 Q1.1-1.2)
+# Loss-weight / MDN study
 OMP_NUM_THREADS=4 python3 revision/loss_and_mdn_study.py \
   > revision/logs/loss_mdn.log 2>&1
 echo "[chain] loss/MDN study done $(date +%H:%M:%S)"
 
-# Continuous compositional space (Referee 1 Q2)
+# Continuous compositional space, no fixed pool
 for orc in oer_twin analytic_sharp; do
   for spec in "lcbds+maxsigma:pcban:C_${orc}_lcbds" \
               "greedy+greedy:pcban:C_${orc}_greedy" \
