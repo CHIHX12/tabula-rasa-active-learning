@@ -7,8 +7,8 @@ In data-scarce active learning the usual way to check whether a campaign has
 left a usable surrogate behind is the bootstrap out-of-bag score, computed on
 resamples of the labelled set.  On the runs in this archive that score
 overstates true out-of-pool accuracy by up to 0.26, and it does so unevenly:
-across twelve budget-matched arms the overstatement ranges from 0.02 to 0.26, a
-factor of thirteen.  It therefore cannot be used to rank sampling strategies
+across twelve budget-matched arms the overstatement ranges from 0.03 to 0.26, a
+factor of seven and a half.  It therefore cannot be used to rank sampling strategies
 against one another, which is exactly what it tends to be used for.
 
 The quantity
@@ -38,8 +38,10 @@ strategies correctly on all seven.
 
 What it does not do
 -------------------
-It does not predict which *seed* of a fixed configuration will end better
-(|Spearman| <= 0.49, p >= 0.15), and its threshold is specific to a model
+It does not predict which *seed* of a fixed configuration will end better:
+within a configuration the rank correlation reaches |Spearman| = 0.62 at
+most and none of the fourteen configurations is significant at ten seeds
+(p >= 0.054).  Its threshold is also specific to a model
 class: for a random forest the tree-ensemble spread does not contract in the
 same way (ratio 1.08) even though its out-of-pool R2 is 0.582.  Calibrate the
 threshold within one model class before relying on the numbers above.

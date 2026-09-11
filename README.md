@@ -19,7 +19,7 @@ python3 revision_code/contraction_ratio.py
 The bootstrap out-of-bag score, the usual way to validate a surrogate in
 data-scarce active learning, overstates true out-of-pool accuracy by up to 0.26
 here, and unevenly: across twelve budget-matched arms the overstatement ranges
-from 0.02 to 0.26. It therefore cannot rank sampling strategies. The
+from 0.03 to 0.26. It therefore cannot rank sampling strategies. The
 contraction ratio can, and uses no held-out data:
 
     ratio = mean(sigma over the last tenth of iterations)
