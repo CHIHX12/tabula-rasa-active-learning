@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import json, glob, os
-FRESH="results"; PRE="/home/cycheng/投稿/submission_code/precomputed_results"
+HERE = os.path.dirname(os.path.abspath(__file__))
+FRESH = os.path.join(HERE, "results")
+PRE = os.path.join(HERE, "precomputed_results")
 def load(d,n):
     p=f"{d}/active_learning_v6_{n}_results.json"
     return json.load(open(p)) if os.path.exists(p) else None

@@ -15,8 +15,8 @@ expects it.
 | Wine quality (red) | 11 | 1599 | `data_external/wine_red.csv` | UCI ML Repository, Cortez *et al.* (2009), doi:10.24432/C56S3T |
 | Building energy efficiency | 8 | 768 | `data_external/energy.csv` | UCI ML Repository, Tsanas & Xifara (2012), doi:10.24432/C51307 |
 
-Required columns are listed in `code/src/data/loader.py` (OER) and in the
-`DATASETS` dictionary of `code/generalize_multi.py` (the other five).
+Required columns are listed in `src/data/loader.py` (OER) and in the
+`DATASETS` dictionary of `generalize_multi.py` (the other five).
 
 Every precomputed trajectory in `precomputed_results/` and
 `revision_results/` was produced from these sources, so all reported figures
